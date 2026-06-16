@@ -1,0 +1,22 @@
+
+.tarjeta-elegante {
+    background-color: #ffff; /*color blanco el fondo de la tarjeta*/
+    border: 2px solid #e0e0e0;/*color del borde de la tarjeta*/
+    border-radius: 15px; /*redondeo de las esquinas de la tarjeta*/
+    padding: 25px;/*espacio interno entre el contenido de la tarjeta y su borde*/
+    max-width: 300px;/*ancho máximo de la tarjeta*/
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin-top: 20px;/*espacio superior entre la tarjeta y otros elementos*/
+}
+
+.tarjeta-elegante h1 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.tarjeta-elegante p {
+    color: #555555;
+    font-size: 16px;
+}
