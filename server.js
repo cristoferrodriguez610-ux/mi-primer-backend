@@ -1,46 +1,49 @@
-// 1. Importamos la librería Mongoose
+// 1. Importamos las herramientas
 const mongoose = require('mongoose');
+const express = require('express'); // Nuestro mesero
+const cors = require('cors'); // El permiso de seguridad
 
-// 2. Tu enlace clásico de conexión (Ya validado ayer)
+const app = express(); // Iniciamos a nuestro mesero
+
+// 2. Configuraciones básicas
+app.use(cors()); // Permite que tu HTML se conecte sin que Windows lo bloquee
+app.use(express.json()); // Le enseña al mesero a entender el formato JSON
+
+// 3. Tu conexión a la base de datos
 const urlConexion = "mongodb://cristoferrodriguez610_db_user:2JEW7cyE22megmXO@ac-ppk36si-shard-00-00.cyf7jzh.mongodb.net:27017,ac-ppk36si-shard-00-01.cyf7jzh.mongodb.net:27017,ac-ppk36si-shard-00-02.cyf7jzh.mongodb.net:27017/?ssl=true&replicaSet=atlas-o300vd-shard-0&authSource=admin&appName=Cluster0";
 
-// 3. Conectamos a la base de datos
 mongoose.connect(urlConexion)
-  .then(async () => {
-      console.log("==================================================");
-      console.log("¡Conexión exitosa a MongoDB Atlas!");
-      console.log("==================================================");
+  .then(() => console.log("✅ Conectado a MongoDB Atlas de forma exitosa"))
+  .catch((error) => console.log("❌ Error de conexión: ", error));
 
-      // --- AQUÍ EMPIEZA TU APRENDIZAJE ---
+// 4. Tu Esquema y Modelo
+const perfilSchema = new mongoose.Schema({
+    nombre: String,
+    edad: Number,
+    ciudad: String
+});
+const Perfil = mongoose.model('Perfil', perfilSchema);
 
-      // PASO 1: Creamos el Esquema (El molde de la gelatina)
-      const perfilSchema = new mongoose.Schema({
-          nombre: String,
-          edad: Number,
-          ciudad: String
-      });
+// =================================================================
+// 5. ¡LA MAGIA! Creamos la "puerta" para que entre la página web
+// =================================================================
+app.post('/api/guardar-perfil', async (req, res) => {
+    try {
+        const datosDelHTML = req.body; 
+        console.log("¡Recibí datos nuevos desde la web!", datosDelHTML);
 
-      // PASO 2: Creamos el Modelo (El constructor basado en el molde)
-      // Mongoose creará automáticamente una colección llamada "perfils" en tu nube
-      const Perfil = mongoose.model('Perfil', perfilSchema);
+        const nuevoPerfil = new Perfil(datosDelHTML);
+        await nuevoPerfil.save();
 
-      console.log("Intentando guardar un perfil de prueba...");
+        res.status(200).json({ mensaje: "¡Guardado exitosamente en la nube!" });
+    } catch (error) {
+        res.status(500).json({ mensaje: "Hubo un error al guardar" });
+    }
+});
 
-      // PASO 3: Creamos un dato real usando nuestro constructor
-      const nuevoPerfil = new Perfil({
-          nombre: "Cristofer Rodríguez",
-          edad: 21,
-          ciudad: "Tegucigalpa"
-      });
-
-      // PASO 4: Ordenamos a Mongoose que lo mande a la nube de AWS
-      // Usamos 'await' para esperar que el viaje por internet termine
-      const datoGuardado = await nuevoPerfil.save();
-      
-      console.log("¡ÉXITO TOTAL! Tu dato ya está en la nube permanentemente.");
-      console.log("Registro guardado:", datoGuardado);
-
-  })
-  .catch((error) => {
-      console.log("Hubo un error en el proceso: ", error);
-  });
+// 6. Encendemos el servidor en el "puerto" 3000
+app.listen(3000, () => {
+    console.log("==================================================");
+    console.log("🚀 Servidor Express escuchando en http://localhost:3000");
+    console.log("==================================================");
+});
