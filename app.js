@@ -122,3 +122,41 @@ botonCiudad.addEventListener("click",function()
         cajaDeTextoCiudad.value = "";
     }
 })
+
+// =================================================================
+// NUEVO: MAGIA FULL-STACK (Conectar Frontend con Backend)
+// =================================================================
+const botonNube = document.getElementById("btnGuardarNube");
+
+botonNube.addEventListener("click", async function() {
+    try {
+        // Cambiamos el texto del botón temporalmente para que se vea que está cargando
+        botonNube.innerText = "⏳ Guardando...";
+
+        // 1. Usamos fetch para llamar a la ventanilla de tu mesero (Express)
+        const respuesta = await fetch("http://localhost:3000/api/guardar-perfil", {
+            method: "POST", // POST significa "Quiero enviar datos nuevos"
+            headers: {
+                "Content-Type": "application/json" // Le avisamos que el paquete va en formato JSON
+            },
+            body: JSON.stringify(objeto) // Convertimos tu 'objeto' actual en texto para que viaje por internet
+        });
+
+        // 2. Abrimos la respuesta que nos devolvió el servidor
+        const datosServidor = await respuesta.json();
+
+        // 3. Revisamos si fue un éxito (código 200)
+        if (respuesta.ok) {
+            alert("✅ ¡ÉXITO! " + datosServidor.mensaje);
+        } else {
+            alert("❌ Uy, hubo un error en el servidor.");
+        }
+        
+    } catch (error) {
+        console.error("Error al enviar:", error);
+        alert("❌ No se pudo conectar. ¿Seguro que tu servidor Node.js está encendido?");
+    } finally {
+        // Regresamos el botón a la normalidad
+        botonNube.innerText = "☁️ Guardar Perfil en la Nube";
+    }
+});
